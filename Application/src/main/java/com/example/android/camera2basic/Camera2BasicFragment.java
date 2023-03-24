@@ -17,6 +17,7 @@
 package com.example.android.camera2basic;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -44,11 +45,6 @@ import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -58,6 +54,12 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -599,8 +601,9 @@ public class Camera2BasicFragment extends Fragment
     /**
      * Opens the camera specified by {@link Camera2BasicFragment#mCameraId}.
      */
+    @SuppressLint("MissingPermission")
     private void openCamera(int width, int height) {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();
             return;
@@ -608,6 +611,7 @@ public class Camera2BasicFragment extends Fragment
         setUpCameraOutputs(width, height);
         configureTransform(width, height);
         Activity activity = getActivity();
+        assert activity != null;
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
